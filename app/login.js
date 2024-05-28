@@ -1,17 +1,25 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, TextInput, Alert, Image, TouchableOpacity, ImageBackground } from "react-native";
+import { signInWithEmailAndPassword } from '@firebase/auth';
+import { auth } from './firebase';
 
 export default function Login({ navigation }) {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {
-    // Aquí puedes agregar tu lógica de autenticación
-    if (username === "admin" && password === "password") {
-      Alert.alert("Login Successful", "Welcome!");
-      navigation.navigate("HomeTabs");
+    if (email === "" || password === "") {
+      Alert.alert("Error", "Todos los campos son obligatorios.");
     } else {
-      Alert.alert("Login Failed", "Incorrect username or password.");
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed in 
+          Alert.alert("Login Successful", "Welcome!");
+          navigation.navigate("HomeTabs");
+        })
+        .catch((error) => {
+          Alert.alert("Login Failed", "Incorrect email or password.");
+        });
     }
   };
 
@@ -25,10 +33,10 @@ export default function Login({ navigation }) {
         <Text style={styles.title}>Iniciar Sessió</Text>
         <TextInput
           style={styles.input}
-          placeholder="Username"
+          placeholder="Email"
           placeholderTextColor="#aaa"
-          value={username}
-          onChangeText={setUsername}
+          value={email}
+          onChangeText={setEmail}
         />
         <TextInput
           style={styles.input}

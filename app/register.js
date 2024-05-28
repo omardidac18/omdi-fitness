@@ -1,18 +1,53 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput, Alert, Image, TouchableOpacity, ImageBackground } from "react-native";
+import { StyleSheet, Text, View, TextInput, Alert, Image, TouchableOpacity, ImageBackground, Platform, Button } from "react-native";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { auth } from './firebase';
+import { getFirestore, setDoc, doc } from '@firebase/firestore';
+import { createUserWithEmailAndPassword } from '@firebase/auth';
+
+const firestore = getFirestore();
 
 export default function Register({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [birthdate, setBirthdate] = useState("");
-  const [height, setHeight] = useState("");
-  const [weight, setWeight] = useState("");
+  const [birthdate, setBirthdate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleRegister = () => {
-    // Aquí puedes agregar tu lógica de registro
-    Alert.alert("Registration Successful", "You have been registered!");
-    navigation.navigate("HomeTabs");
+    if (username === "" || password === "" || email === "") {
+      Alert.alert("Error", "Todos los campos son obligatorios.");
+    } else {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          const userData = {
+            username,
+            birthdate: birthdate.toISOString().split('T')[0],
+          };
+          setDoc(doc(firestore, "users", user.uid), userData)
+            .then(() => {
+              Alert.alert("Registro Exitoso", "¡Te has registrado!");
+              navigation.navigate("HomeTabs");
+            })
+            .catch((error) => {
+              Alert.alert("Error", error.message);
+            });
+        })
+        .catch((error) => {
+          Alert.alert("Error", error.message);
+        });
+    }
+  };
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || birthdate;
+    setShowDatePicker(Platform.OS === 'ios');
+    setBirthdate(currentDate);
+  };
+
+  const showDatepicker = () => {
+    setShowDatePicker(true);
   };
 
   return (
@@ -30,13 +65,18 @@ export default function Register({ navigation }) {
           value={username}
           onChangeText={setUsername}
         />
-        <TextInput
-          style={styles.input}
-          placeholder="Data Naixement"
-          placeholderTextColor="#aaa"
-          value={birthdate}
-          onChangeText={setBirthdate}
-        />
+        <View style={styles.datePickerContainer}>
+          <Text style={styles.dateText}>{birthdate.toDateString()}</Text>
+          <Button onPress={showDatepicker} title="Selecciona la teva data de naixament" />
+        </View>
+        {showDatePicker && (
+          <DateTimePicker
+            value={birthdate}
+            mode="date"
+            display="default"
+            onChange={onChange}
+          />
+        )}
         <TextInput
           style={styles.input}
           placeholder="Email"
@@ -126,5 +166,23 @@ const styles = StyleSheet.create({
     textShadowColor: "#000",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 5,
+  },
+  datePickerContainer: {
+    width: "100%",
+    padding: 15,
+    marginVertical: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    backgroundColor: "#fff",
+    opacity: 0.8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dateText: {
+    fontSize: 16,
+    color: "#000",
+    flex: 1,
   },
 });
