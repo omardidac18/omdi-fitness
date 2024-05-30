@@ -9,16 +9,16 @@ export default function Login({ navigation }) {
 
   const handleLogin = () => {
     if (email === "" || password === "") {
-      Alert.alert("Error", "Todos los campos son obligatorios.");
+      Alert.alert("Error", "Tots els camps són obligatoris.");
     } else {
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           // Signed in 
-          Alert.alert("Login Successful", "Welcome!");
+          Alert.alert("Login Correcte", "Benvingut/da!");
           navigation.navigate("HomeTabs");
         })
         .catch((error) => {
-          Alert.alert("Login Failed", "Incorrect email or password.");
+          Alert.alert("Login Fallit", "Email o contrasenya incorrectes.");
         });
     }
   };
@@ -40,14 +40,14 @@ export default function Login({ navigation }) {
         />
         <TextInput
           style={styles.input}
-          placeholder="Password"
+          placeholder="Contrasenya"
           placeholderTextColor="#aaa"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
         />
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
+          <Text style={styles.buttonText}>Iniciar Sessió</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>

@@ -16,23 +16,11 @@ export default function DrawerMenu({ navigation }) {
       </TouchableOpacity>
       <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('RateApp')}>
         <Ionicons name="star-outline" size={24} style={styles.icon} />
-        <Text style={styles.menuText}>Valora la APP</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Notifications')}>
-        <Ionicons name="notifications-outline" size={24} style={styles.icon} />
-        <Text style={styles.menuText}>Notificacions</Text>
+        <Text style={styles.menuText}>Valora l'App</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Credits')}>
         <Ionicons name="information-circle-outline" size={24} style={styles.icon} />
         <Text style={styles.menuText}>Crèdits</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Profile')}>
-        <Ionicons name="person-outline" size={24} style={styles.icon} />
-        <Text style={styles.menuText}>Perfil</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Settings')}>
-        <Ionicons name="settings-outline" size={24} style={styles.icon} />
-        <Text style={styles.menuText}>Configuració</Text>
       </TouchableOpacity>
       <View style={styles.spacer}></View>
       <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Login')}>
@@ -50,9 +38,10 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 70,
     marginBottom: 20,
+    marginLeft: -30,
   },
   menuItem: {
     flexDirection: "row",

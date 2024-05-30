@@ -5,7 +5,7 @@ export default function MapScreen() {
   return (
     <View style={styles.container}>
         <Header />
-      <Image source={require("../assets/images/logo.png")} style={styles.map} />
+      <Image source={require("../assets/images/gymmap.jpg")} style={styles.map} />
     </View>
   );
 }
@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#5aa",
   },
   map: {
-    width: "90%",
-    height: "90%",
+    width: "80%",
+    height: "80%",
     resizeMode: "contain",
   },
   backButton: {

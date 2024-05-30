@@ -29,13 +29,13 @@ function HomeTabs() {
         tabBarIcon: ({ color, size }) => {
           let iconName;
 
-          if (route.name === "Home") {
+          if (route.name === "Inici") {
             iconName = "home-outline";
           } else if (route.name === "Reserves") {
             iconName = "clipboard-outline";
-          } else if (route.name === "Horari") {
+          } else if (route.name === "Classes") {
             iconName = "calendar-outline";
-          } else if (route.name === "More") {
+          } else if (route.name === "Més") {
             iconName = "ellipsis-horizontal-outline";
           }
 
@@ -43,10 +43,10 @@ function HomeTabs() {
         },
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Inici" component={HomeScreen} />
       <Tab.Screen name="Reserves" component={ReservesScreen} />
-      <Tab.Screen name="Horari" component={HorariScreen} />
-      <Tab.Screen name="More" component={DrawerMenu} />
+      <Tab.Screen name="Classes" component={HorariScreen} />
+      <Tab.Screen name="Més" component={DrawerMenu} />
     </Tab.Navigator>
   );
 }

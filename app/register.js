@@ -16,7 +16,7 @@ export default function Register({ navigation }) {
 
   const handleRegister = () => {
     if (username === "" || password === "" || email === "") {
-      Alert.alert("Error", "Todos los campos son obligatorios.");
+      Alert.alert("Error", "Tots els camps són obligatoris.");
     } else {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
@@ -27,7 +27,7 @@ export default function Register({ navigation }) {
           };
           setDoc(doc(firestore, "users", user.uid), userData)
             .then(() => {
-              Alert.alert("Registro Exitoso", "¡Te has registrado!");
+              Alert.alert("Registre Exitos", "T'has registrat!");
               navigation.navigate("HomeTabs");
             })
             .catch((error) => {
@@ -67,7 +67,7 @@ export default function Register({ navigation }) {
         />
         <View style={styles.datePickerContainer}>
           <Text style={styles.dateText}>{birthdate.toDateString()}</Text>
-          <Button onPress={showDatepicker} title="Selecciona la teva data de naixament" />
+          <Button onPress={showDatepicker} title="Selecciona la teva data de naixement" />
         </View>
         {showDatePicker && (
           <DateTimePicker

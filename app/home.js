@@ -1,39 +1,98 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Image, Text, ScrollView, ImageBackground } from "react-native";
+import { ref, get } from "firebase/database";
+import { getAuth } from 'firebase/auth';
+import { db } from "./firebase"; 
 
 export default function HomeScreen() {
+  const [reservation, setReservation] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const auth = getAuth();
+
+  const fetchReservations = async () => {
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const userUid = user.uid;
+        const dbRef = ref(db, 'classes');
+        const snapshot = await get(dbRef);
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          const userReservations = [];
+          const availableClasses = [];
+          Object.keys(data).forEach((key) => {
+            if (data[key].reservations && data[key].reservations[userUid]) {
+              userReservations.push({
+                id: key,
+                ...data[key]
+              });
+            } else {
+              availableClasses.push({
+                id: key,
+                ...data[key]
+              });
+            }
+          });
+
+          if (userReservations.length > 0) {
+            setReservation(userReservations[Math.floor(Math.random() * userReservations.length)]);
+          }
+
+          if (availableClasses.length > 0) {
+            const shuffled = availableClasses.sort(() => 0.5 - Math.random());
+            setSuggestions(shuffled.slice(0, 2));
+          }
+        } else {
+          console.log("No hi han dades disponibles");
+        }
+      } else {
+        console.error("Usuari no autentificat");
+      }
+    } catch (error) {
+      console.error("Error al rebre les reserves:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReservations();
+    const interval = setInterval(() => {
+      fetchReservations();
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <ImageBackground source={require("../assets/images/gym2.jpg")} style={styles.background}>
+    <ImageBackground source={require("../assets/images/gym2.png")} style={styles.background}>
       <ScrollView contentContainerStyle={styles.container}>
         <Image source={require("../assets/images/logo.png")} style={styles.mainImage} />
         <Text style={styles.sectionTitle}>Les meves reserves:</Text>
-        <View style={styles.reservesContainer}>
-          <Image source={require("../assets/images/logo.png")} style={styles.smallImage} />
-          <View style={styles.textContainer}>
-            <Text>Reserva 1</Text>
-            <Image source={require("../assets/images/logo.png")} style={styles.backgroundImage} />
+        {reservation && (
+          <View style={styles.reservesContainer}>
+            <Image source={require("../assets/images/reserva.jpg")} style={styles.smallImage} />
+            <View style={styles.textContainer}>
+              <Text style={styles.classTitle}>{reservation.NomClase}</Text>
+              <Text style={styles.classInfo}>Sala: {reservation.Sala}</Text>
+              <Text style={styles.classInfo}>Data: {reservation.Data}</Text>
+              <Text style={styles.classInfo}>Hora: {reservation.Hora}</Text>
+              <Text style={styles.classInfo}>Monitor: {reservation.Entrenador}</Text>
+            </View>
           </View>
-        </View>
+        )}
         <Text style={styles.sectionTitle}>Suggerències de classes:</Text>
         <View style={styles.suggestionsContainer}>
-          <View style={styles.suggestion}>
-            <Image source={require("../assets/images/logo.png")} style={styles.smallImage} />
-            <View style={styles.textContainer}>
-              <Text>Classe 1</Text>
-              <Text>Hora: </Text>
-              <Text>Monitor: </Text>
-              <Text>Sala: </Text>
+          {suggestions.map((classe) => (
+            <View key={classe.id} style={styles.suggestion}>
+              <Image source={require("../assets/images/idea.png")} style={styles.smallImage} />
+              <View style={styles.textContainer}>
+                <Text style={styles.classTitle}>{classe.NomClase}</Text>
+                <Text style={styles.classInfo}>Data: {classe.Data}</Text>
+                <Text style={styles.classInfo}>Hora: {classe.Hora}</Text>
+                <Text style={styles.classInfo}>Monitor: {classe.Entrenador}</Text>
+                <Text style={styles.classInfo}>Sala: {classe.Sala}</Text>
+              </View>
             </View>
-          </View>
-          <View style={styles.suggestion}>
-            <Image source={require("../assets/images/logo.png")} style={styles.smallImage} />
-            <View style={styles.textContainer}>
-              <Text>Classe 2</Text>
-              <Text>Hora: </Text>
-              <Text>Monitor: </Text>
-              <Text>Sala: </Text>
-            </View>
-          </View>
+          ))}
         </View>
       </ScrollView>
     </ImageBackground>
@@ -86,6 +145,14 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
   },
+  classTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  classInfo: {
+    fontSize: 16,
+  },
   suggestionsContainer: {
     width: "100%",
   },
@@ -101,11 +168,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 5,
-  },
-  backgroundImage: {
-    width: 50,
-    height: 50,
-    opacity: 0.5,
-    resizeMode: "contain",
   },
 });

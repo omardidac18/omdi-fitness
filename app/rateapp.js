@@ -5,12 +5,12 @@ import { Rating } from 'react-native-ratings';
 import Header from "../components/Header";
 export default function RateAppScreen({ navigation }) {
   const handleRatingCompleted = (rating) => {
-    Alert.alert("Gracias por tu valoración", `Has valorado la app con ${rating} estrellas.`);
+    Alert.alert("Gràcies per la teva valoració", `Has valorat l'app amb ${rating} estrelles.`);
   };
   return (
     <View style={styles.container}>
         <Header />
-        <Text style={styles.title}>Valora la APP</Text>
+        <Text style={styles.title}>Valora l'App</Text>
         <View style={styles.ratingContainer}>
           <Rating
             type='star'
